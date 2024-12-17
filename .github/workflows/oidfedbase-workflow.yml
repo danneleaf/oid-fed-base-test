@@ -2,7 +2,7 @@
 #
 # SPDX-License-Identifier: Apache-2.0
 
-name: openid-federation-base workflow
+name: oid-fed-base-test workflow
 
 on:
   push:

@@ -6,11 +6,6 @@ name: Publish artifact
 
 on: [workflow_call] # yamllint disable-line rule:truthy
 
-env:
-  REGISTRY: ghcr.io
-  IMAGE_NAME: ${{ github.repository }}
-  REPO_NAME: openid-federation-base 
-
 jobs:
   publish-container:
     name: Build and Publish Container Image
