@@ -10,7 +10,7 @@
 
   <name>OIDC Sweden :: OpenID Federation :: Base</name>
   <description>Base support for OpenID Federation development</description>
-  <url>https://github.com/oidc-sweden/openid-federation-base</url>
+  <url>https://github.com/danneleaf/oid-fed-base-test</url>
 
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -72,10 +72,6 @@
       <name>GitHub Packages</name>
       <url>https://maven.pkg.github.com/danneleaf/oid-fed-base-test</url>
     </repository>
-    <snapshotRepository>
-      <id>s01-ossrh</id>
-      <url>https://s01.oss.sonatype.org/content/repositories/snapshots</url>
-    </snapshotRepository>
   </distributionManagement>
 
   <dependencyManagement>
