@@ -22,7 +22,7 @@ jobs:
           echo "Testing GitHub API access..."
           HTTP_STATUS=$(curl -s -o /dev/null -w "%{http_code}" \
             -H "Authorization: Bearer ${{ secrets.PACKAGES_TOKEN }}" \
-            https://api.github.com/danneleaf)
+            https://api.github.com/users/danneleaf/packages)
           echo "API Status: $HTTP_STATUS"
       - name: Set up JDK 21
         uses: actions/setup-java@8df1039502a15bceb9433410b1a100fbe190c53b # v4.5.0
