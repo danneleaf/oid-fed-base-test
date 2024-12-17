@@ -27,6 +27,7 @@ jobs:
 #      contents: read
 #      security-events: write
 #    uses: ./.github/workflows/misclint.yml
+
   test:
     permissions:
       contents: read

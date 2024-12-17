@@ -11,7 +11,7 @@
   <name>OIDC Sweden :: OpenID Federation :: Base</name>
   <description>Base support for OpenID Federation development</description>
   <url>https://github.com/danneleaf/oid-fed-base-test</url>
-
+  
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <java.version>17</java.version>
