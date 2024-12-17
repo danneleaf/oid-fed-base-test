@@ -31,7 +31,7 @@ jobs:
           cache: maven
           server-id: github
           server-username: ${{ github.actor }}
-          server-password: ${{ secrets.GITHUB_TOKEN }}
+          server-password: ${{ secrets.PACKAGES_TOKEN }}
           gpg-private-key: ${{ secrets.GPG_PRIVATE_KEY }}
       
       - name: Build, Generate SBOM, and Deploy
@@ -39,7 +39,7 @@ jobs:
           mvn -B clean package cyclonedx:makeAggregateBom
           mvn -B -e deploy
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.PACKAGES_TOKEN }}
       
       - name: Upload SBOM
         uses: actions/upload-artifact@v4
