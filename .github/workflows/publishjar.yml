@@ -28,29 +28,32 @@ jobs:
           distribution: "temurin"
           cache: maven
           server-id: github
-          server-username: danneleaf
+          server-username: ${{ github.actor }}
           server-password: ${{ secrets.WORKFLOW_TOKEN }}
 
-      - name: Test Authentication
+      - name: Test GitHub Package Permissions
         run: |
-          echo "Testing GitHub API access..."
-          HTTP_STATUS=$(curl -s -o /dev/null -w "%{http_code}" \
+          echo "1. Testing basic authentication..."
+          BASIC_AUTH=$(curl -s -o /dev/null -w "%{http_code}" \
+            -H "Authorization: Bearer ${{ secrets.WORKFLOW_TOKEN }}" \
+            https://api.github.com/user)
+          echo "Basic auth status: $BASIC_AUTH"
+          
+          echo "2. Testing package list access..."
+          PKG_LIST=$(curl -s -o /dev/null -w "%{http_code}" \
             -H "Authorization: Bearer ${{ secrets.WORKFLOW_TOKEN }}" \
             -H "Accept: application/vnd.github.v3+json" \
-            https://api.github.com/user/packages?package_type=maven)
-          echo "API Status: $HTTP_STATUS"
-
-      - name: Check Maven Settings
-        run: |
-          cat ~/.m2/settings.xml
-          echo "Current user: ${{ github.actor }}"
-
-      - name: Check Maven Settings
-        run: |
-          echo "Maven settings location:"
-          ls -la ~/.m2/
-          echo "Settings content:"
-          cat ~/.m2/settings.xml
+            "https://api.github.com/user/packages?package_type=maven")
+          echo "Package list status: $PKG_LIST"
+          
+          echo "3. Testing write permission..."
+          WRITE_TEST=$(curl -s -o /dev/null -w "%{http_code}" \
+            -X PUT \
+            -H "Authorization: Bearer ${{ secrets.WORKFLOW_TOKEN }}" \
+            -H "Accept: application/vnd.github.v3+json" \
+            -H "Content-Length: 0" \
+            "https://maven.pkg.github.com/danneleaf/oid-fed-base-test/com/github/danneleaf/test-package/1.0.0/test-package-1.0.0.pom")
+          echo "Write test status: $WRITE_TEST"
 
       - name: Build, Generate SBOM, and Deploy
         run: |
