@@ -47,6 +47,7 @@ jobs:
         run: |
           # First publish the POM
           curl -v \
+            -X PUT \
             -H "Authorization: Bearer ${{ secrets.WORKFLOW_TOKEN }}" \
             -H "Content-Type: application/xml" \
             --data-binary "@pom.xml" \
@@ -54,11 +55,12 @@ jobs:
             
           # Then publish the JAR
           curl -v \
+            -X PUT \
             -H "Authorization: Bearer ${{ secrets.WORKFLOW_TOKEN }}" \
             -H "Content-Type: application/java-archive" \
             --data-binary "@target/oid-fed-base-test-2.0.2.jar" \
             "https://maven.pkg.github.com/danneleaf/oid-fed-base-test/com/github/danneleaf/oid-fed-base-test/2.0.2/oid-fed-base-test-2.0.2.jar"
-            
+
       - name: Upload SBOM
         uses: actions/upload-artifact@v4
         with:
