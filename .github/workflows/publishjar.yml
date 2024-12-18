@@ -9,10 +9,12 @@ on:
     secrets:
       WORKFLOW_TOKEN:
         required: true
+
 jobs:
   publish-container:
     name: Build and Publish Container Image
     runs-on: ubuntu-latest
+
     permissions:
       contents: read
       packages: write
@@ -28,16 +30,36 @@ jobs:
           distribution: "temurin"
           cache: maven
           server-id: github
-          server-username: ${{ github.actor }}
+          server-username: ${{ github.repository_owner }}
           server-password: ${{ secrets.WORKFLOW_TOKEN }}
 
-      - name: Build, Generate SBOM, and Deploy
-        env:
-          GITHUB_TOKEN: ${{ secrets.WORKFLOW_TOKEN }}
-          GITHUB_ACTOR: ${{ github.actor }}
+      - name: Show Generated Settings
+        run: |
+          echo "Maven settings content:"
+          cat ~/.m2/settings.xml
+          echo "Using token for repository: ${{ github.repository }}"
+          echo "Using owner: ${{ github.repository_owner }}"
+
+      - name: Build, Generate SBOM
         run: |
           mvn -B clean package
-          mvn -B -e deploy
+      - name: Publish Package with Curl
+        run: |
+          # First publish the POM
+          curl -v \
+            -X PUT \
+            -H "Authorization: Bearer ${{ secrets.WORKFLOW_TOKEN }}" \
+            -H "Content-Type: application/xml" \
+            --data-binary "@pom.xml" \
+            "https://maven.pkg.github.com/danneleaf/oid-fed-base-test/com/github/danneleaf/oid-fed-base-test/2.0.2/oid-fed-base-test-2.0.2.pom"
+            
+          # Then publish the JAR
+          curl -v \
+            -X PUT \
+            -H "Authorization: Bearer ${{ secrets.WORKFLOW_TOKEN }}" \
+            -H "Content-Type: application/java-archive" \
+            --data-binary "@target/oid-fed-base-test-2.0.2.jar" \
+            "https://maven.pkg.github.com/danneleaf/oid-fed-base-test/com/github/danneleaf/oid-fed-base-test/2.0.2/oid-fed-base-test-2.0.2.jar"
 
       - name: Upload SBOM
         uses: actions/upload-artifact@v4
