@@ -32,21 +32,13 @@ jobs:
           server-password: ${{ secrets.PACKAGES_TOKEN }}
       
       - name: Build, Generate SBOM, and Deploy
-        run: |
-
-          echo "Maven version and settings:"
-          mvn --version
-          
-          echo "Checking effective POM:"
-          mvn help:effective-pom
-          
+        run: |   
           echo "Building with debug output:"
-          mvn -X clean package
+          mvn clean package
           
           echo "Deploying with debug output:"
           mvn -X deploy
-         # mvn -B clean package cyclonedx:makeAggregateBom
-         # mvn -B -e deploy
+        
         env:
           GITHUB_TOKEN: ${{ secrets.PACKAGES_TOKEN }}
       
