@@ -11,7 +11,7 @@
   <name>OIDC Sweden :: OpenID Federation :: Base</name>
   <description>Base support for OpenID Federation development</description>
   <url>https://github.com/danneleaf/oid-fed-base-test</url>
-  
+
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <java.version>17</java.version>
@@ -247,7 +247,14 @@
           <release>${java.version}</release>
         </configuration>
       </plugin>
-
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-deploy-plugin</artifactId>
+        <version>3.1.1</version>
+        <configuration>
+          <skip>false</skip>
+        </configuration>
+      </plugin>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-javadoc-plugin</artifactId>
