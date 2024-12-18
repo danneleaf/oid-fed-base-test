@@ -4,8 +4,11 @@
 
 name: Publish artifact 
 
-on: [workflow_call] # yamllint disable-line rule:truthy
-
+on:
+  workflow_call:
+    secrets:
+      PACKAGES_TOKEN:
+        required: true
 jobs:
   publish-container:
     name: Build and Publish Container Image
