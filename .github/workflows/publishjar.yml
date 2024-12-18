@@ -28,7 +28,7 @@ jobs:
           distribution: "temurin"
           cache: maven
           server-id: github
-          server-username: ${{ github.actor }}
+          server-username: danneleaf
           server-password: ${{ secrets.WORKFLOW_TOKEN }}
 
       - name: Test Authentication
@@ -44,7 +44,7 @@ jobs:
         run: |
           cat ~/.m2/settings.xml
           echo "Current user: ${{ github.actor }}"
-          
+
       - name: Check Maven Settings
         run: |
           echo "Maven settings location:"
