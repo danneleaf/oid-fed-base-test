@@ -7,7 +7,7 @@ name: Publish artifact
 on:
   workflow_call:
     secrets:
-      PACKAGES_TOKEN:
+      GITHUB_TOKEN:
         required: true
 jobs:
   publish-container:
