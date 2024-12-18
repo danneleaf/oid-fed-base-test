@@ -33,7 +33,7 @@ jobs:
       
       - name: Build, Generate SBOM, and Deploy
         run: |
-          mvn -B clean package cyclonedx:makeAggregateBom
+          mvn -B clean package
           mvn -B -e deploy
         env:
           GITHUB_TOKEN: ${{ secrets.PACKAGES_TOKEN }}
