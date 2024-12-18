@@ -9,7 +9,7 @@ on:
     secrets:
       WORKFLOW_TOKEN:
         required: true
-        
+
 jobs:
   publish-container:
     name: Build and Publish Container Image
@@ -40,11 +40,25 @@ jobs:
           echo "Using token for repository: ${{ github.repository }}"
           echo "Using owner: ${{ github.repository_owner }}"
 
-      - name: Build, Generate SBOM, and Deploy
+      - name: Build, Generate SBOM
         run: |
           mvn -B clean package
-          mvn -B -e deploy
-
+      - name: Publish Package with Curl
+        run: |
+          # First publish the POM
+          curl -v \
+            -H "Authorization: Bearer ${{ secrets.WORKFLOW_TOKEN }}" \
+            -H "Content-Type: application/xml" \
+            --data-binary "@pom.xml" \
+            "https://maven.pkg.github.com/danneleaf/oid-fed-base-test/com/github/danneleaf/oid-fed-base-test/2.0.2/oid-fed-base-test-2.0.2.pom"
+            
+          # Then publish the JAR
+          curl -v \
+            -H "Authorization: Bearer ${{ secrets.WORKFLOW_TOKEN }}" \
+            -H "Content-Type: application/java-archive" \
+            --data-binary "@target/oid-fed-base-test-2.0.2.jar" \
+            "https://maven.pkg.github.com/danneleaf/oid-fed-base-test/com/github/danneleaf/oid-fed-base-test/2.0.2/oid-fed-base-test-2.0.2.jar"
+            
       - name: Upload SBOM
         uses: actions/upload-artifact@v4
         with:
