@@ -9,10 +9,12 @@ on:
     secrets:
       WORKFLOW_TOKEN:
         required: true
+        
 jobs:
   publish-container:
     name: Build and Publish Container Image
     runs-on: ubuntu-latest
+
     permissions:
       contents: read
       packages: write
@@ -28,55 +30,15 @@ jobs:
           distribution: "temurin"
           cache: maven
           server-id: github
-          server-username: ${{ github.actor }}
+          server-username: ${{ github.repository_owner }}
           server-password: ${{ secrets.WORKFLOW_TOKEN }}
 
-      - name: Test GitHub Package Permissions
+      - name: Show Generated Settings
         run: |
-          echo "1. Testing basic authentication..."
-          BASIC_AUTH=$(curl -s -o /dev/null -w "%{http_code}" \
-            -H "Authorization: Bearer ${{ secrets.WORKFLOW_TOKEN }}" \
-            https://api.github.com/user)
-          echo "Basic auth status: $BASIC_AUTH"
-          
-          echo "2. Testing package list access..."
-          PKG_LIST=$(curl -s -o /dev/null -w "%{http_code}" \
-            -H "Authorization: Bearer ${{ secrets.WORKFLOW_TOKEN }}" \
-            -H "Accept: application/vnd.github.v3+json" \
-            "https://api.github.com/user/packages?package_type=maven")
-          echo "Package list status: $PKG_LIST"
-          
-          echo "3. Testing write permission..."
-                echo "Testing Maven package publish permissions..."
-          
-          # Create a minimal test POM
-          echo "<?xml version=\"1.0\"?>
-          <project>
-            <modelVersion>4.0.0</modelVersion>
-            <groupId>com.github.danneleaf</groupId>
-            <artifactId>test-package</artifactId>
-            <version>1.0.0</version>
-          </project>" > test.pom
-          
-          # Try to publish test POM
-          HTTP_STATUS=$(curl -s -o /dev/null -w "%{http_code}" \
-            -X PUT \
-            -H "Authorization: Bearer ${{ secrets.WORKFLOW_TOKEN }}" \
-            -H "Content-Type: application/xml" \
-            --data-binary "@test.pom" \
-            "https://maven.pkg.github.com/danneleaf/oid-fed-base-test/com/github/danneleaf/test-package/1.0.0/test-package-1.0.0.pom")
-          
-          echo "Publish test status: $HTTP_STATUS"
-          
-          # Show more details if there's an error
-          if [ "$HTTP_STATUS" != "201" ]; then
-            echo "Detailed response:"
-            curl -v \
-              -H "Authorization: Bearer ${{ secrets.WORKFLOW_TOKEN }}" \
-              -H "Content-Type: application/xml" \
-              --data-binary "@test.pom" \
-              "https://maven.pkg.github.com/danneleaf/oid-fed-base-test/com/github/danneleaf/test-package/1.0.0/test-package-1.0.0.pom"
-          fi
+          echo "Maven settings content:"
+          cat ~/.m2/settings.xml
+          echo "Using token for repository: ${{ github.repository }}"
+          echo "Using owner: ${{ github.repository_owner }}"
 
       - name: Build, Generate SBOM, and Deploy
         run: |
