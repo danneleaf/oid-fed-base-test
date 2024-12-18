@@ -28,7 +28,7 @@ jobs:
           HTTP_STATUS=$(curl -s -o /dev/null -w "%{http_code}" \
             -H "Authorization: Bearer ${{ secrets.PACKAGES_TOKEN }}" \
             -H "Accept: application/vnd.github.v3+json" \
-            https://api.github.com/danneleaf)
+            https://api.github.com/user)
           echo "User API Status: $HTTP_STATUS"
           
           # Test packages list if user auth works
@@ -37,7 +37,7 @@ jobs:
             curl -s \
               -H "Authorization: Bearer ${{ secrets.PACKAGES_TOKEN }}" \
               -H "Accept: application/vnd.github.v3+json" \
-              https://api.github.com/danneleaf/packages
+              https://api.github.com/user/packages
           fi
 
       - name: Set up JDK 21
