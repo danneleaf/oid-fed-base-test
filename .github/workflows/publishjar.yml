@@ -47,13 +47,36 @@ jobs:
           echo "Package list status: $PKG_LIST"
           
           echo "3. Testing write permission..."
-          WRITE_TEST=$(curl -s -o /dev/null -w "%{http_code}" \
+                echo "Testing Maven package publish permissions..."
+          
+          # Create a minimal test POM
+          echo "<?xml version=\"1.0\"?>
+          <project>
+            <modelVersion>4.0.0</modelVersion>
+            <groupId>com.github.danneleaf</groupId>
+            <artifactId>test-package</artifactId>
+            <version>1.0.0</version>
+          </project>" > test.pom
+          
+          # Try to publish test POM
+          HTTP_STATUS=$(curl -s -o /dev/null -w "%{http_code}" \
             -X PUT \
             -H "Authorization: Bearer ${{ secrets.WORKFLOW_TOKEN }}" \
-            -H "Accept: application/vnd.github.v3+json" \
-            -H "Content-Length: 0" \
+            -H "Content-Type: application/xml" \
+            --data-binary "@test.pom" \
             "https://maven.pkg.github.com/danneleaf/oid-fed-base-test/com/github/danneleaf/test-package/1.0.0/test-package-1.0.0.pom")
-          echo "Write test status: $WRITE_TEST"
+          
+          echo "Publish test status: $HTTP_STATUS"
+          
+          # Show more details if there's an error
+          if [ "$HTTP_STATUS" != "201" ]; then
+            echo "Detailed response:"
+            curl -v \
+              -H "Authorization: Bearer ${{ secrets.WORKFLOW_TOKEN }}" \
+              -H "Content-Type: application/xml" \
+              --data-binary "@test.pom" \
+              "https://maven.pkg.github.com/danneleaf/oid-fed-base-test/com/github/danneleaf/test-package/1.0.0/test-package-1.0.0.pom"
+          fi
 
       - name: Build, Generate SBOM, and Deploy
         run: |
