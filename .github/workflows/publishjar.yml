@@ -29,7 +29,7 @@ jobs:
           distribution: "temurin"
           cache: maven
           server-id: github
-          server-settings-file: settings.xml 
+          settings-path: ${{ github.workspace }}
           server-username: ${{ github.actor }}
           server-password: ${{ secrets.WORKFLOW_TOKEN }}
 
