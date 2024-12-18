@@ -250,9 +250,9 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-deploy-plugin</artifactId>
-        <version>3.1.1</version>
+        <version>3.13.0</version>
         <configuration>
-          <skip>false</skip>
+          <release>21</release>
         </configuration>
       </plugin>
       <plugin>
