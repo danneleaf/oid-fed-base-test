@@ -21,25 +21,6 @@ jobs:
       - name: Checkout Repository
         uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4
       
-      - name: Test Token Access
-        run: |
-          echo "Testing GitHub API access..."
-          # Test basic authentication
-          HTTP_STATUS=$(curl -s -o /dev/null -w "%{http_code}" \
-            -H "Authorization: Bearer ${{ secrets.PACKAGES_TOKEN }}" \
-            -H "Accept: application/vnd.github.v3+json" \
-            https://api.github.com/user)
-          echo "User API Status: $HTTP_STATUS"
-          
-          # Test packages list if user auth works
-          if [ "$HTTP_STATUS" = "200" ]; then
-            echo "Testing packages access..."
-            curl -s \
-              -H "Authorization: Bearer ${{ secrets.PACKAGES_TOKEN }}" \
-              -H "Accept: application/vnd.github.v3+json" \
-              https://api.github.com/user/packages?package_type=maven
-          fi
-
       - name: Set up JDK 21
         uses: actions/setup-java@8df1039502a15bceb9433410b1a100fbe190c53b # v4.5.0
         with:
@@ -49,12 +30,23 @@ jobs:
           server-id: github
           server-username: ${{ github.actor }}
           server-password: ${{ secrets.PACKAGES_TOKEN }}
-          gpg-private-key: ${{ secrets.GPG_PRIVATE_KEY }}
       
       - name: Build, Generate SBOM, and Deploy
         run: |
-          mvn -B clean package cyclonedx:makeAggregateBom
-          mvn -B -e deploy
+
+          echo "Maven version and settings:"
+          mvn --version
+          
+          echo "Checking effective POM:"
+          mvn help:effective-pom
+          
+          echo "Building with debug output:"
+          mvn -X clean package
+          
+          echo "Deploying with debug output:"
+          mvn -X deploy
+         # mvn -B clean package cyclonedx:makeAggregateBom
+         # mvn -B -e deploy
         env:
           GITHUB_TOKEN: ${{ secrets.PACKAGES_TOKEN }}
       
